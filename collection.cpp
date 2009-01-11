@@ -2,8 +2,7 @@
 
 #include "collection.h"
 
-Collection::Collection(QObject *parent)
-    : QObject(parent)
+Collection::Collection()
 {
     m_db = QSqlDatabase::addDatabase("QPSQL");
     m_db.setHostName("cirkus");
@@ -45,7 +44,7 @@ QString Collection::find(QString type, QString term) {
     QString result;
 
     QSqlQuery query(m_db);
-    query.prepare("SELECT filename, duration, album, artist, title, tracknumber FROM file WHERE ?=?");
+    query.prepare("SELECT filename, duration/1000 AS duration, album, artist, title, tracknumber FROM file WHERE ?=?");
     query.addBindValue(type);
     query.addBindValue(term);
 
@@ -60,6 +59,7 @@ QString Collection::find(QString type, QString term) {
                 query.value(4).toString(),              // Title
                 query.value(5).toString()));             // Track
     }
+    result.append("OK\n");
     return result;
 }
 
@@ -96,6 +96,7 @@ QString Collection::list(QString metadataType, QString termType = "", QString te
         result.append(QString("%1: %2\n").arg(type, query.value(0).toString()));
     }
 
+    result.append("OK\n");
     return result;
 }
 
@@ -122,6 +123,8 @@ QString Collection::listAll(QString path)
     {
         result.append(QString("file: %1").arg(query.value(0).toString()));
     }
+
+    result.append("OK\n");
     return result;
 }
 
@@ -158,6 +161,8 @@ QString Collection::listAllInfo(QString path)
                 query.value(4).toString(),              // Title
                 query.value(5).toString()));             // Track
     }
+    
+    result.append("OK\n");
     return result;
 }
 
@@ -177,7 +182,6 @@ QString Collection::lsInfo(QString path = "/")
     QString result;
 
     QSqlQuery query(m_db);
-//    query.prepare("SELECT DISTINCT SUBSTRING(filename FROM ?([^/]*)/) FROM file WHERE filename LIKE ?%");//FIXME? (fnutteproblemet)
     query.prepare("SELECT DISTINCT substring(filename from '^?([^/]*)'), substring(filename from '^?([^/]*)/') is null from file where filename like '?%'");
     query.addBindValue(path);
     query.addBindValue(path);
@@ -187,10 +191,12 @@ QString Collection::lsInfo(QString path = "/")
     while(query.next())
     {
         if (query.value(1).toBool())
-            result.append(QString("file: %1").arg(query.value(0).toString()));
+            result.append(QString("file: %1\n").arg(query.value(0).toString()));
         else
-            result.append(QString("directory: %1").arg(query.value(0).toString()));
+            result.append(QString("directory: %1\n").arg(query.value(0).toString()));
     }
+
+    result.append("OK\n");
     return result;
 }
 
@@ -238,5 +244,81 @@ QString Collection::search(QString type, QString term)
                 query.value(4).toString(),              // Title
                 query.value(5).toString()));             // Track
     }
+    result.append("OK\n");
     return result;
 }
+
+QString Collection::count(QString type, QString term)
+{
+    /**
+     * Purpose:
+     *  Retrieve the number of songs and their total playtime in the database matching "term", of "type".
+     *
+     * Example return value:
+     *  >count artist celldweller
+     *  songs: 48
+     *  playtime: 12622
+     *  OK
+     */
+
+    if (!m_validTypes.contains(type))
+        return QString();
+
+    QSqlQuery query(m_db);
+    query.prepare("SELECT COUNT(*), SUM(duration/1000) FROM file WHERE ?=?");
+    query.addBindValue(type);
+    query.addBindValue(term);
+
+    query.exec();
+    if (query.next())
+        return QString("songs: %1\nplaytime: %2\nOK\n").arg(query.value(0).toString(), query.value(1).toString()); // jeje, toInt()
+    else
+        return QString("ACK [5@0] {Database error}\n");
+}
+
+/* End of MPD directly mapped commands */
+
+bool Collection::urlIsValid(QString url)
+{
+    QSqlQuery query(m_db);
+    query.prepare("SELECT (SELECT filename FROM file WHERE filename=?) IS NOT NULL");
+    query.addBindValue(url);
+    query.exec();
+    if (query.next())
+        return query.value(0).toBool();
+    else
+        return false;
+
+}
+
+int Collection::getFileId(QString url)
+{
+    if (urlIsValid(url))
+    {
+        QSqlQuery query(m_db);
+        query.prepare("SELECT file_id FROM file WHERE filename=?");
+        query.addBindValue(url);
+        query.exec();
+        if (query.next())
+            return query.value(0).toInt();
+        else
+            return -1;
+    }
+    else
+        return -1;
+}
+
+QString Collection::getFile(int id)
+{
+    QSqlQuery query(m_db);
+    query.prepare("SELECT filename FROM file WHERE file_id=?");
+    query.addBindValue(id);
+    query.exec();
+
+    if (query.next())
+        return query.value(0).toString();
+    else
+        return QString();
+
+}
+

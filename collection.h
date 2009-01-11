@@ -1,3 +1,6 @@
+#ifndef COLLECTION_H
+#define COLLECTION_H
+
 #include <QtSql>
 
 class Collection : public QObject
@@ -5,7 +8,7 @@ class Collection : public QObject
     Q_OBJECT
 
     public:
-        Collection(QObject*);
+        Collection();
         ~Collection();
 
         QString find(QString type, QString term); //Finds songs in the database with a case sensitive, exact match to "term".
@@ -14,7 +17,12 @@ class Collection : public QObject
         QString listAllInfo(QString path); //Lists all information in database about all music files in "path" recursively.
         QString lsInfo(QString path); // List contents of "path", from the database. 
         QString search(QString metadataType, QString term); // Finds songs in the database with a case insensitive match to "term".
-        QString count(QString scope, QString term); // Retrieve the number of songs and their total playtime in the database matching "term".
+        QString count(QString type, QString term); // Retrieve the number of songs and their total playtime in the database matching "term".
+
+        bool urlIsValid(QString url);
+
+        int getFileId(QString url);
+        QString getFile(int id);
 
     signals:
         void databaseError(QString);
@@ -24,3 +32,5 @@ class Collection : public QObject
         QSqlDatabase m_db;
         QStringList m_validTypes;
 };
+
+#endif
