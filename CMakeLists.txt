@@ -1,20 +1,22 @@
 cmake_minimum_required(VERSION 2.6)
 
-project(moped)
+project(impd)
 
-set (moped_srcs
+set (impd_srcs
     main.cpp
     collection.cpp
     server.cpp
     clientthread.cpp
     dialog.cpp
+    player.cpp
 )
 
-set (moped_moc_hdrs
+set (impd_moc_hdrs
     server.h
     collection.h
     clientthread.h
     dialog.h
+    player.h
 )
 
 add_definitions(-Wall)
@@ -26,9 +28,9 @@ set(QT_USE_QTSQL TRUE)
 find_package(Qt4 REQUIRED)
 include(${QT_USE_FILE})
 
-qt4_wrap_cpp(moped_moc_srcs ${moped_moc_hdrs})
+qt4_wrap_cpp(impd_moc_srcs ${impd_moc_hdrs})
 
-add_executable(moped ${moped_srcs} ${moped_moc_srcs})
+add_executable(impd ${impd_srcs} ${impd_moc_srcs})
 
-target_link_libraries(moped ${QT_LIBRARIES})
+target_link_libraries(impd ${QT_LIBRARIES})
 
