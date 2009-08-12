@@ -1,0 +1,11 @@
+     iMPD
+_________
+ITK's MPD
+
+
+Simple MPD replacement, using the Locutus music collection manager's database
+for information about the collection, written in C++ using Qt.
+
+A work in progress.
+
+ -- Martin Sandsmark

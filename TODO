@@ -1,4 +1,7 @@
 Collection database:
  - Caching
- Player class:
+Player class:
  - Loading/saving of playlists
+Client thread:
+ - Playlist handling
+

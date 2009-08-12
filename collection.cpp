@@ -115,7 +115,7 @@ QString Collection::listAll(QString path)
     QString result;
 
     QSqlQuery query(m_db);
-    query.prepare("SELECT filename FROM file WHERE filename LIKE '^?'"); //FIXME?
+    query.prepare("SELECT filename FROM file WHERE filename LIKE '^?'"); //FIXME? not really tested
     query.addBindValue(path);
 
     query.exec();
@@ -166,7 +166,7 @@ QString Collection::listAllInfo(QString path)
     return result;
 }
 
-QString Collection::lsInfo(QString path = "/")
+QString Collection::lsInfo(QString path)
 {
     /**
      * Purpose:
@@ -322,3 +322,7 @@ QString Collection::getFile(int id)
 
 }
 
+QString Collection::validTypes()
+{
+    return m_validTypes.join("\n") + QString("OK\n");
+}

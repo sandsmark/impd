@@ -25,11 +25,11 @@ class Player : Phonon::MediaObject
         bool move(int oldPos, int newPos);
         bool moveId(int songId, int newPos);
         QString playlistInfo(int song);
+        void play(int id=-1);
 
     private slots:
         void enqueueNext();
     private:
-
         Phonon::MediaObject *m_mediaObject;
         QList<PlaylistItem> m_playlist;
         int m_currentItem;
