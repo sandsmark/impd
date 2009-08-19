@@ -18,6 +18,7 @@ class Collection : public QObject
         QString lsInfo(QString path = "/"); // List contents of "path", from the database. 
         QString search(QString metadataType, QString term); // Finds songs in the database with a case insensitive match to "term".
         QString count(QString type, QString term); // Retrieve the number of songs and their total playtime in the database matching "term".
+        QString validTypes();
 
         bool urlIsValid(QString url);
 

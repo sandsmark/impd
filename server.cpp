@@ -6,7 +6,7 @@
 Server::Server(QObject *parent)
     : QTcpServer(parent)
 {
-    m_player = new Phonon::MediaObject();
+    m_player = new Player();
 }
 
 Server::~Server()
@@ -16,7 +16,7 @@ Server::~Server()
 
 void Server::incomingConnection(int socketDescriptor)
 {
-    ClientThread *thread = new ClientThread(socketDescriptor, this);
+    ClientThread *thread = new ClientThread(socketDescriptor, this, m_player, m_collection);
 
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
     connect(thread, SIGNAL(stop()), this, SLOT(lol()));

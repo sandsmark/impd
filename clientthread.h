@@ -24,7 +24,7 @@ class ClientThread : public QThread
     Q_OBJECT
 
 public:
-    ClientThread(int socketDescriptor, QObject *parent, Player *player);
+    ClientThread(int socketDescriptor, QObject *parent, Player*, Collection*);
 
     void run();
 

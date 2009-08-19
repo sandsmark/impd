@@ -1,6 +1,8 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+#include "player.h"
+
 #include <QStringList>
 #include <QTcpServer>
 #include <Phonon>
@@ -20,7 +22,7 @@ protected:
     void incomingConnection(int socketDescriptor);
 
 private:
-    Phonon::MediaObject *m_player;
+    Player *m_player;
 };
 
 #endif
