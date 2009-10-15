@@ -2,6 +2,7 @@
 #define SERVER_H
 
 #include "player.h"
+#include "collection.h"
 
 #include <QStringList>
 #include <QTcpServer>
@@ -23,6 +24,7 @@ protected:
 
 private:
     Player *m_player;
+    Collection *m_collection;
 };
 
 #endif

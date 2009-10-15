@@ -50,9 +50,12 @@ void ClientThread::run()
 {
     QTcpSocket tcpSocket;
     if (!tcpSocket.setSocketDescriptor(m_socketDescriptor)) {
+        qWarning() << ":(((";
         emit error(tcpSocket.error());
         return;
     }
+
+    m_running = true;
 
     QString command, response;
 
@@ -71,12 +74,12 @@ void ClientThread::run()
         parseCommand(command);
 
         response = "OK\n"; //Default response, nothing went wrong.
-
+    }
 
     tcpSocket.disconnectFromHost();
 }
 
-void parseCommand(QString command)
+QString ClientThread::parseCommand(QString command)
 {
     QStringList arguments = command.split(" ");
     command = arguments.takeFirst();
@@ -85,7 +88,9 @@ void parseCommand(QString command)
         return QString("ACK {unknown command}");
 
     // Playback control
-    if (command == "play") {
+    if (command == "status")
+        return m_player->status();
+    else if (command == "play") {
         if (arguments.size() > 0)
             m_player->play(arguments[0].toInt());
         else
@@ -103,7 +108,7 @@ void parseCommand(QString command)
     else if (command == "previous")
         m_player->previous();
     else if (command == "playid" && arguments.size() > 0)
-        m_player->playId(arguments[0].toInt());
+        m_player->play(arguments[0].toInt());
     else if (command == "seek" && arguments.size() > 0)
         m_player->seek(arguments[0].toInt());
     else if (command == "seek" && arguments.size() > 1)
@@ -165,8 +170,8 @@ void parseCommand(QString command)
             return m_collection->lsInfo(arguments[0]);
         else 
             return m_collection->lsInfo();
-    } else if (command == "search" && arguments.size() > 0)
-        return m_collection->find(arguments[0]);
+    } else if (command == "search" && arguments.size() > 1)
+        return m_collection->find(arguments[0], arguments[1]);
 
     // Connection settings
     else if (command == "close")

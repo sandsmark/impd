@@ -4,13 +4,16 @@
 
 #include <stdlib.h>
 
-#include "dialog.h"
+#include "server.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    Dialog dialog;
-    dialog.show();
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
-    return dialog.exec();
+    QCoreApplication::setApplicationName("IMPD");
+
+    Server server;
+    if (!server.listen(QHostAddress::Any, 1337)) {
+        qFatal("Unable to listen on local port!");
+    }
+    return app.exec();
 }

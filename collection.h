@@ -12,7 +12,7 @@ class Collection : public QObject
         ~Collection();
 
         QString find(QString type, QString term); //Finds songs in the database with a case sensitive, exact match to "term".
-        QString list(QString metadataType1, QString metadataType2, QString term); //List all metadata of metadataType*.
+        QString list(QString metadataType1, QString artist=""); //List all metadata of metadataType*.
         QString listAll(QString path = "/"); // Lists all directories and filenames in "path" recursively. 
         QString listAllInfo(QString path = "/"); //Lists all information in database about all music files in "path" recursively.
         QString lsInfo(QString path = "/"); // List contents of "path", from the database. 

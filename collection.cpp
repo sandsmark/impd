@@ -63,7 +63,7 @@ QString Collection::find(QString type, QString term) {
     return result;
 }
 
-QString Collection::list(QString metadataType, QString termType = "", QString term = "")
+QString Collection::list(QString metadataType, QString artist)
 {
     /**
      * Purpose :
@@ -75,7 +75,7 @@ QString Collection::list(QString metadataType, QString termType = "", QString te
      *  Album: ænema
      */
 
-    if ((!m_validTypes.contains(metadataType)) || (!m_validTypes.contains(termType)))
+    if (!m_validTypes.contains(metadataType))
         return QString();
 
     QString type = metadataType; 
@@ -85,10 +85,15 @@ QString Collection::list(QString metadataType, QString termType = "", QString te
     QString result;
 
     QSqlQuery query(m_db);
-    query.prepare("SELECT DISTINCT ? FROM file WHERE '?'='?'");
-    query.addBindValue(metadataType);
-    query.addBindValue(termType);
-    query.addBindValue(term);
+    if (metadataType == "album" && !artist.isEmpty()) {
+        query.prepare("SELECT DISTINCT album FROM file WHERE artist = ?");
+        query.addBindValue(artist);
+    } else if (metadataType == "artist") {
+        query.prepare("SELECT DISTINCT artist FROM file");
+    } else {
+        query.prepare("SELECT DISTINCT album FROM file");
+    }
+
 
     query.exec();
     while (query.next())

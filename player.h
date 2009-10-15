@@ -6,7 +6,7 @@
 #include "playlistItem.h"
 #include "collection.h"
 
-class Player : Phonon::MediaObject
+class Player : public QObject
 {
     Q_OBJECT
 
@@ -14,27 +14,47 @@ class Player : Phonon::MediaObject
         Player();
         ~Player();
 
-        bool add(QString url);
+        void add(QString url);
         int addId(QString url, int pos);
         void clear();
         QString currentSong();
-        bool removeItem(int num);
-        bool removeId(int id);
-        bool loadPlaylist(QString url);
-        bool renamePlaylist(QString oldName, QString newName);
-        bool move(int oldPos, int newPos);
-        bool moveId(int songId, int newPos);
+        void removeItem(int num);
+        void removeId(int id);
+        void loadPlaylist(QString url);
+        void renamePlaylist(QString oldName, QString newName);
+        void move(int oldPos, int newPos);
         QString playlistInfo(int song);
         void play(int id=-1);
+        void pause();
+        void stop();
+        void togglePause();
+        void next();
+        void previous();
+        void seek(int amount);
+        void seek(int amount, int song);
+        void seekId(int amount, int id);
+
+        void moveId(int songId, int newPos);
+
+        void setRandom(bool value);
+        void setConsume(bool value);
+        void setRepeat(bool value);
+        QString status();
+
 
     private slots:
         void enqueueNext();
+
     private:
         Phonon::MediaObject *m_mediaObject;
-        QList<PlaylistItem> m_playlist;
+        QList<QString> m_playlist;
         int m_currentItem;
         Collection m_collection;
         int m_playlistVersion;
+
+        bool m_random;
+        bool m_consume;
+        bool m_repeat;
 
 };
 

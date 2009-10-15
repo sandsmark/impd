@@ -7,7 +7,6 @@ set (impd_srcs
     collection.cpp
     server.cpp
     clientthread.cpp
-    dialog.cpp
     player.cpp
 )
 
@@ -15,7 +14,6 @@ set (impd_moc_hdrs
     server.h
     collection.h
     clientthread.h
-    dialog.h
     player.h
 )
 
