@@ -10,7 +10,7 @@ Collection::Collection()
     m_db.setUserName("sandsmark_impd");
     m_db.setPassword("Kohdie3o");
     if (!m_db.open())
-        emit databaseError(m_db.lastError().text());
+        qWarning() << m_db.lastError().text();
 
     m_validTypes << "album"
                  << "artist"

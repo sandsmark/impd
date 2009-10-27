@@ -46,9 +46,9 @@ int Player::addId(QString url, int pos = -1)
         else
             pos = m_playlist.size();
     }
+    m_currentItem = pos;
 
-    PlaylistItem newItem(url, ++m_playlistVersion);
-    return m_playlistVersion;
+    return m_collection.getFileId(url);
 }
 
 void Player::clear()

@@ -71,9 +71,7 @@ void ClientThread::run()
        
         qDebug() << command;
 
-        parseCommand(command);
-
-        response = "OK\n"; //Default response, nothing went wrong.
+        tcpSocket.write(parseCommand(command).toLocal8Bit());
     }
 
     tcpSocket.disconnectFromHost();
@@ -85,7 +83,7 @@ QString ClientThread::parseCommand(QString command)
     command = arguments.takeFirst();
 
     if (!m_validCommands.contains(command))
-        return QString("ACK {unknown command}");
+        return QString("ACK {unknown command}\n");
 
     // Playback control
     if (command == "status")
